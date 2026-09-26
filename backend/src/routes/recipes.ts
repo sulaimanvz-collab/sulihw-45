@@ -41,7 +41,7 @@ router.post(
         user: req.user._id,
         title: req.body.title,
         recipe: req.body.recipe,
-        image: "/uploads/" + req.file.filename,
+        image: "uploads/" + req.file.filename,
       });
 
       await recipe.save();

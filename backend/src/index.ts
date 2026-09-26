@@ -15,7 +15,10 @@ const port = 8000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/users", usersRouter);
 app.use("/recipes", recipesRouter);
