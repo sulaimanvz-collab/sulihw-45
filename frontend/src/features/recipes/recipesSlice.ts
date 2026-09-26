@@ -1,41 +1,50 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Recipe, Comment } from "../../types";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+
+export interface Recipe {
+  _id: string;
+  user: {
+    _id: string;
+    username: string;
+  };
+  title: string;
+  image: string;
+  recipe: string;
+}
 
 interface RecipesState {
-  recipes: Recipe[];
+  items: Recipe[];
   currentRecipe: Recipe | null;
-  comments: Comment[];
-  fetchLoading: boolean;
-  createLoading: boolean;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: RecipesState = {
-  recipes: [],
+  items: [],
   currentRecipe: null,
-  comments: [],
-  fetchLoading: false,
-  createLoading: false,
+  loading: false,
+  error: null,
 };
 
-export const recipesSlice = createSlice({
+const recipesSlice = createSlice({
   name: "recipes",
   initialState,
   reducers: {
     setRecipes: (state, action: PayloadAction<Recipe[]>) => {
-      state.recipes = action.payload;
+      state.items = action.payload;
     },
     setCurrentRecipe: (state, action: PayloadAction<Recipe | null>) => {
       state.currentRecipe = action.payload;
     },
-    setComments: (state, action: PayloadAction<Comment[]>) => {
-      state.comments = action.payload;
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     },
-    setFetchLoading: (state, action: PayloadAction<boolean>) => {
-      state.fetchLoading = action.payload;
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
     },
   },
 });
 
-export const { setRecipes, setCurrentRecipe, setComments, setFetchLoading } =
+export const { setRecipes, setCurrentRecipe, setLoading, setError } =
   recipesSlice.actions;
 export const recipesReducer = recipesSlice.reducer;
