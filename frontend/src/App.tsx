@@ -19,6 +19,7 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<Recipes />} />
             <Route path="/recipes" element={<Recipes />} />
+            <Route path="/users/:userId" element={<Recipes />} />{" "}
             <Route path="/recipes/new" element={<NewRecipe />} />
             <Route path="/recipes/:id" element={<FullRecipe />} />
             <Route path="/register" element={<Register />} />

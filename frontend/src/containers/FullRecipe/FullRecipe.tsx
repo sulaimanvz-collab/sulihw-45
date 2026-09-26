@@ -13,7 +13,7 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   setCurrentRecipe,
@@ -29,6 +29,19 @@ interface Comment {
   };
   text: string;
 }
+
+const PLACEHOLDER_IMAGE =
+  "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22300%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23333333%22%20alignment-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E";
+
+const getImageUrl = (imagePath?: string) => {
+  if (!imagePath) return PLACEHOLDER_IMAGE;
+  if (imagePath.startsWith("http")) return imagePath;
+
+  const filename = imagePath.split("/").pop()?.split("\\").pop();
+  if (!filename) return PLACEHOLDER_IMAGE;
+
+  return `http://localhost:8000/uploads/${filename}`;
+};
 
 export const FullRecipe = () => {
   const { id } = useParams<{ id: string }>();
@@ -104,13 +117,30 @@ export const FullRecipe = () => {
       <CardMedia
         component="img"
         height="400"
-        image={`http://localhost:8000/uploads/${currentRecipe.image}`}
+        image={getImageUrl(currentRecipe.image)}
         alt={currentRecipe.title}
+        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = PLACEHOLDER_IMAGE;
+        }}
         sx={{ borderRadius: 2, mb: 3, objectFit: "cover" }}
       />
 
       <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-        Автор: {currentRecipe.user.username}
+        Автор:{" "}
+        <Typography
+          component={Link}
+          to={`/users/${currentRecipe.user._id}`}
+          variant="h6"
+          sx={{
+            color: "primary.main",
+            textDecoration: "none",
+            fontWeight: "bold",
+            "&:hover": { textDecoration: "underline" },
+          }}
+        >
+          {currentRecipe.user.username}
+        </Typography>
       </Typography>
 
       <Typography variant="body1" sx={{ whiteSpace: "pre-line", mb: 4 }}>
@@ -158,7 +188,20 @@ export const FullRecipe = () => {
             }
           >
             <ListItemText
-              primary={comment.user.username}
+              primary={
+                <Typography
+                  component={Link}
+                  to={`/users/${comment.user._id}`}
+                  sx={{
+                    color: "text.primary",
+                    fontWeight: "bold",
+                    textDecoration: "none",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
+                >
+                  {comment.user.username}
+                </Typography>
+              }
               secondary={comment.text}
             />
           </ListItem>
